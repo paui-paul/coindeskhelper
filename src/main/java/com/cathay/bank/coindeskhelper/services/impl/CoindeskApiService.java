@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.cathay.bank.coindeskhelper.services.ICoindeskApiService;
+import com.cathay.bank.coindeskhelper.utils.annotations.LogExecution;
 import com.cathay.bank.coindeskhelper.vos.CoindeskhelperProps;
 import com.cathay.bank.coindeskhelper.vos.CurrentPrice;
 
@@ -19,6 +20,7 @@ public class CoindeskApiService implements ICoindeskApiService {
         this.props = props;
     }
 
+    @LogExecution
     @Override
     public CurrentPrice getCurrentPrice() {
         String uri = this.props.getApi().getCoindesk().getCurrentPriceUrl();

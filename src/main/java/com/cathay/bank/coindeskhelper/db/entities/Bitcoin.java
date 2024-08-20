@@ -28,8 +28,14 @@ public class Bitcoin {
     @Column
     private int status;
 
-    @Column
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime updated;
+    
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedIso;
+    
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime updatedUk;
 
     @Column
     private String createdBy;

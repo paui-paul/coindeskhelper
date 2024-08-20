@@ -5,7 +5,6 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +48,9 @@ class CurrentPriceJobTest {
     void testExecute() throws JobExecutionException {
         CurrentPrice currentPrice = new CurrentPrice();
         Time time = new Time();
-        time.setUpdated(LocalDateTime.now());
+        time.setUpdated("Aug 20, 2024 06:18:12 UTC");
+        time.setUpdatedIso("2024-08-20T06:18:12+00:00");
+        time.setUpdatedUk("Aug 20, 2024 at 07:18 BST");
         currentPrice.setTime(time);
         Map<String, Currency> bpi = new HashMap<>();
 

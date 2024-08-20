@@ -1,9 +1,10 @@
 package com.cathay.bank.coindeskhelper.vos;
 
 import java.time.LocalDateTime;
-import com.cathay.bank.coindeskhelper.utils.JsonDeserialize.CoindeskApiTimeDeserializer;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,14 +18,30 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Time {
     @JsonProperty("updated")
-    @JsonDeserialize(using = CoindeskApiTimeDeserializer.class)
-    private LocalDateTime updated;
+    private String updated;
 
     @JsonProperty("updatedISO")
-    @JsonDeserialize(using = CoindeskApiTimeDeserializer.class)
-    private LocalDateTime updatedIso;
+    private String updatedIso;
 
     @JsonProperty("updateduk")
-    @JsonDeserialize(using = CoindeskApiTimeDeserializer.class)
-    private LocalDateTime updatedUk;
+    private String updatedUk;
+
+    @JsonIgnore
+    public LocalDateTime getUpdatedLocalDateTime() {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("MMM d, yyyy HH:mm:ss z", Locale.ENGLISH);
+        return LocalDateTime.parse(this.updated, formatter);
+    }
+
+    @JsonIgnore
+    public LocalDateTime getUpdatedIsoLocalDateTime() {
+        return LocalDateTime.parse(this.updatedIso, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    @JsonIgnore
+    public LocalDateTime getUpdatedUkLocalDateTime() {
+        DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern("MMM dd, yyyy 'at' HH:mm z", Locale.ENGLISH);
+        return LocalDateTime.parse(this.updatedUk, formatter);
+    }
 }

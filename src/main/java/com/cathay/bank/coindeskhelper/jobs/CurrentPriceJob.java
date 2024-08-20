@@ -40,7 +40,9 @@ public class CurrentPriceJob implements Job {
             bitcoin.setDescription(x.getDescription());
             bitcoin.setRateFloat(x.getRateFloat());
             bitcoin.setStatus(0);
-            bitcoin.setUpdated(currentPrice.getTime().getUpdated());
+            bitcoin.setUpdated(currentPrice.getTime().getUpdatedLocalDateTime());
+            bitcoin.setUpdatedIso(currentPrice.getTime().getUpdatedIsoLocalDateTime());
+            bitcoin.setUpdatedUk(currentPrice.getTime().getUpdatedUkLocalDateTime());
 
             if (!set.contains(x.getCode())) {
                 bitcoin.setCreatedBy(JOB_NAME);
