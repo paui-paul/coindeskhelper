@@ -1,5 +1,6 @@
 package com.cathay.bank.coindeskhelper.db.entities;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +12,8 @@ import lombok.Data;
 
 @Entity
 @Data
-public class ExecutionLog {
-    
+public class ExecutionLog implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

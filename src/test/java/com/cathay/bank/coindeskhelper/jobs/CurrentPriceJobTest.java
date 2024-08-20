@@ -20,7 +20,9 @@ import org.mockito.MockitoAnnotations;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
+import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
+import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.ICoindeskApiService;
 import com.cathay.bank.coindeskhelper.vos.Currency;
 import com.cathay.bank.coindeskhelper.vos.CurrentPrice;
@@ -31,7 +33,10 @@ class CurrentPriceJobTest {
     private ICoindeskApiService service;
 
     @Mock
-    private IBitcoinRepo repo;
+    private IBitcoinRepo bitcoinRepo;
+
+    @Mock
+    private IBitcoinTranslationRepo bitcoinTranslationRepo;
 
     @Mock
     private JobExecutionContext context;
@@ -65,7 +70,7 @@ class CurrentPriceJobTest {
         when(service.getCurrentPrice()).thenReturn(currentPrice);
 
         Set<String> existingCodes = new HashSet<>(Arrays.asList("USD"));
-        when(repo.findAll()).thenReturn(existingCodes.stream().map(code -> {
+        when(bitcoinRepo.findAll()).thenReturn(existingCodes.stream().map(code -> {
             Bitcoin bitcoin = new Bitcoin();
             bitcoin.setCode(code);
             return bitcoin;
@@ -73,8 +78,8 @@ class CurrentPriceJobTest {
 
         job.execute(context);
 
-        verify(repo, times(1)).saveAll(anyList());
-        verify(repo).saveAll(argThat((List<Bitcoin> bitcoins) -> {
+        verify(bitcoinRepo, times(1)).saveAll(anyList());
+        verify(bitcoinRepo).saveAll(argThat((List<Bitcoin> bitcoins) -> {
             Bitcoin savedUSD = bitcoins.stream().filter(b -> b.getCode().equals("USD")).findFirst()
                     .orElse(null);
             Bitcoin savedEUR = bitcoins.stream().filter(b -> b.getCode().equals("EUR")).findFirst()
@@ -83,6 +88,19 @@ class CurrentPriceJobTest {
             return savedUSD != null && savedUSD.getUpdatedBy().equals(CurrentPriceJob.JOB_NAME)
                     && savedEUR != null && savedEUR.getCreatedBy().equals(CurrentPriceJob.JOB_NAME)
                     && savedEUR.getUpdatedBy() == null;
+        }));
+        verify(bitcoinTranslationRepo, times(1)).saveAll(anyList());
+        verify(bitcoinTranslationRepo).saveAll(argThat((List<BitcoinTranslation> translations) -> {
+            BitcoinTranslation savedUSDTranslation = translations.stream()
+                    .filter(b -> b.getCode().equals("USD")).findFirst().orElse(null);
+            BitcoinTranslation savedEURTranslation = translations.stream()
+                    .filter(b -> b.getCode().equals("EUR")).findFirst().orElse(null);
+
+            return savedUSDTranslation != null
+                    && savedUSDTranslation.getUpdatedBy().equals(CurrentPriceJob.JOB_NAME)
+                    && savedEURTranslation != null
+                    && savedEURTranslation.getCreatedBy().equals(CurrentPriceJob.JOB_NAME)
+                    && savedEURTranslation.getUpdatedBy() == null;
         }));
     }
 }

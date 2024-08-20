@@ -5,35 +5,27 @@ import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import lombok.Data;
 
 @Entity
+@IdClass(BitcoinTranslationId.class)
 @Data
-public class Bitcoin implements Serializable {
+public class BitcoinTranslation implements Serializable {
+
     @Id
     @Column
     private String code;
 
+    @Id
     @Column
-    private String symbol;
-
-    @Column
-    private String rate;
+    private String language;
 
     @Column
-    private float rateFloat;
+    private String name;
 
     @Column
-    private int status;
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updated;
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedIso;
-
-    @Column(columnDefinition = "TIMESTAMP")
-    private LocalDateTime updatedUk;
+    private String description;
 
     @Column
     private String createdBy;
@@ -46,4 +38,5 @@ public class Bitcoin implements Serializable {
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedTime;
+
 }
