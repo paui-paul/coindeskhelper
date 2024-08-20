@@ -10,10 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.quartz.JobDetail;
-import org.quartz.SimpleScheduleBuilder;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import com.cathay.bank.coindeskhelper.jobs.CurrentPriceJob;
 import com.cathay.bank.coindeskhelper.vos.CoindeskhelperProps;
 

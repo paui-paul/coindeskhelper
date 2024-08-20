@@ -8,6 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
 
 @RestControllerAdvice
@@ -34,6 +35,14 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
         result.setResult(errors);
+        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {BitcoinException.class})
+    public ResponseEntity<RestResult<Object>> handler(BitcoinException exception) {
+        RestResult<Object> result = new RestResult<>();
+        result.setSuccess(false);
+        result.setMessage(exception.getMessage());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 }
