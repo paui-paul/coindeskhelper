@@ -1,6 +1,5 @@
 package com.cathay.bank.coindeskhelper.vos;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
@@ -18,6 +17,7 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "props")
 public class CoindeskhelperProps {
     private ApiProperties api;
+    private ScheduleProperties schedule;
 
     @Getter
     @Setter
@@ -47,10 +47,9 @@ public class CoindeskhelperProps {
         @AllArgsConstructor
         @EqualsAndHashCode
         @Component
+        @ConfigurationProperties(prefix = "props.api.coindesk")
         public static class CoindeskProperties {
-            @Value("${props.api.coindesk.baseuri}")
             private String baseUri;
-            @Value("${props.api.coindesk.currentprice}")
             private String currentPrice;
 
             public String getCurrentPriceUrl() {
@@ -59,4 +58,13 @@ public class CoindeskhelperProps {
         }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    @ConfigurationProperties(prefix = "props.schedule")
+    public static class ScheduleProperties {
+        private int interval;
+    }
 }
