@@ -2,6 +2,7 @@ package com.cathay.bank.coindeskhelper.vos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -19,8 +20,8 @@ public class BitcoinStatus {
     private String code;
 
     @Schema(description = "status code, 0: active, 1: inactive", example = "1")
-    @NotEmpty
-    private int status;
+    @NotNull
+    private Integer status;
 
     public String getCode() {
         return this.code.toUpperCase();
