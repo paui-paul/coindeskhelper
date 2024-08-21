@@ -2,6 +2,7 @@ package com.cathay.bank.coindeskhelper.controllers;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +20,15 @@ import com.cathay.bank.coindeskhelper.vos.RestResult;
 @RequestMapping("/api/bitcoin")
 public interface IBitcoinController {
 
-    @GetMapping("/{language}")
-    ResponseEntity<RestResult<List<BitCoinInfoByLanguage>>> findBitcoinByLanguage(
-            @PathVariable String language);
+        @GetMapping("/{language}")
+        ResponseEntity<RestResult<List<BitCoinInfoByLanguage>>> findBitcoinByLanguage(
+                        @PathVariable String language);
 
-    @PostMapping("/translation/add-or-update")
-    ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
-            @RequestBody BitcoinTranslationSetting setting) throws BitcoinException;
+        @PostMapping("/translation/add-or-update")
+        ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
+                        @RequestBody BitcoinTranslationSetting setting) throws BitcoinException;
 
+        @DeleteMapping("/translation/{code}/{language}")
+        ResponseEntity<RestResult<Boolean>> deleteTranslation(@PathVariable String code,
+                        @PathVariable String language) throws BitcoinException;
 }

@@ -2,6 +2,7 @@ package com.cathay.bank.coindeskhelper.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -121,6 +122,42 @@ class BitcoinControllerTest {
 
         mockMvc.perform(post("/api/bitcoin/translation/add-or-update")
                 .contentType(MediaType.APPLICATION_JSON).content(asJsonString(setting)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("code: BTC not exists"));
+    }
+
+    @Test
+    void testDeleteTranslation_Success() throws Exception {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinService.deleteTranslation(code, language)).thenReturn(true);
+
+        mockMvc.perform(delete("/api/bitcoin/translation/{code}/{language}", code, language))
+                .andExpect(status().isOk()).andExpect(jsonPath(".result").value(true));
+    }
+
+    @Test
+    void testDeleteTranslation_NotFound() throws Exception {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinService.deleteTranslation(code, language)).thenReturn(false);
+
+        mockMvc.perform(delete("/api/bitcoin/translation/{code}/{language}", code, language))
+                .andExpect(status().isOk()).andExpect(jsonPath(".result").value(false));
+    }
+
+    @Test
+    void testDeleteTranslation_CodeNotExists() throws Exception {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinService.deleteTranslation(code, language))
+                .thenThrow(new BitcoinException("code: " + code + " not exists"));
+
+
+        when(bitcoinService.addOrUpdateTranslation(any(BitcoinTranslationSetting.class)))
+                .thenThrow(new BitcoinException("code: BTC not exists"));
+
+        mockMvc.perform(delete("/api/bitcoin/translation/{code}/{language}", code, language))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("code: BTC not exists"));
     }

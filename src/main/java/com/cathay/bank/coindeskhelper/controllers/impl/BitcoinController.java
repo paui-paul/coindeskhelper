@@ -36,4 +36,12 @@ public class BitcoinController implements IBitcoinController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<RestResult<Boolean>> deleteTranslation(String code, String language)
+            throws BitcoinException {
+        RestResult<Boolean> result = new RestResult<>();
+        result.setResult(this.service.deleteTranslation(code, language));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
 }

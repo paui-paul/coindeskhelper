@@ -13,4 +13,6 @@ public interface IBitcoinService {
 
     BitcoinTranslation addOrUpdateTranslation(BitcoinTranslationSetting setting)
             throws BitcoinException;
+
+    boolean deleteTranslation(String code, String language) throws BitcoinException;
 }

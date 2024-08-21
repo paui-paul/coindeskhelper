@@ -1,8 +1,11 @@
 package com.cathay.bank.coindeskhelper.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -194,5 +197,54 @@ class BitcoinServiceTest {
         verify(bitcoinRepo, times(1)).existsById("BTC");
         verify(bitcoinTranslationRepo, times(0)).findById(any(BitcoinTranslationId.class));
         verify(bitcoinTranslationRepo, times(0)).save(any(BitcoinTranslation.class));
+    }
+
+    @Test
+    void testDeleteTranslation_Success() throws BitcoinException {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinRepo.existsById(code)).thenReturn(true);
+
+        BitcoinTranslationId id = new BitcoinTranslationId();
+        id.setCode(code);
+        id.setLanguage(language);
+        when(bitcoinTranslationRepo.existsById(id)).thenReturn(true);
+
+        boolean result = bitcoinService.deleteTranslation(code, language);
+        assertTrue(result);
+        verify(bitcoinTranslationRepo, times(1)).deleteById(id);
+    }
+
+    @Test
+    void testDeleteTranslation_NotFound() throws BitcoinException {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinRepo.existsById(code)).thenReturn(true);
+
+        BitcoinTranslationId id = new BitcoinTranslationId();
+        id.setCode(code);
+        id.setLanguage(language);
+        when(bitcoinTranslationRepo.existsById(id)).thenReturn(false);
+
+        boolean result = bitcoinService.deleteTranslation(code, language);
+        assertFalse(result);
+        verify(bitcoinTranslationRepo, never()).deleteById(id);
+    }
+
+    @Test
+    void testDeleteTranslation_CodeNotExists() {
+        String code = "BTC";
+        String language = "EN";
+        when(bitcoinRepo.existsById(code.toUpperCase())).thenReturn(false);
+
+        BitcoinException exception = assertThrows(BitcoinException.class, () -> {
+            bitcoinService.deleteTranslation(code, language);
+        });
+
+        BitcoinTranslationId id = new BitcoinTranslationId();
+        id.setCode(code);
+        id.setLanguage(language);
+        assertEquals("code: " + code + " not exists", exception.getMessage());
+        verify(bitcoinTranslationRepo, never()).deleteById(id);
     }
 }

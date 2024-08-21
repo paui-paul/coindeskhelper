@@ -57,4 +57,20 @@ public class BitcoinService implements IBitcoinService {
         }
     }
 
+    @Override
+    public boolean deleteTranslation(String code, String language) throws BitcoinException {
+        if (!this.bitcoinRepo.existsById(code.toUpperCase()))
+            throw new BitcoinException("code: " + code + " not exists");
+
+        BitcoinTranslationId id = new BitcoinTranslationId();
+        id.setCode(code.toUpperCase());
+        id.setLanguage(language.toUpperCase());
+
+        if (this.bitcoinTranslationRepo.existsById(id)) {
+            this.bitcoinTranslationRepo.deleteById(id);
+            return true;
+        } else
+            return false;
+    }
+
 }
