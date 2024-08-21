@@ -2,6 +2,7 @@ package com.cathay.bank.coindeskhelper.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslationId;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
@@ -25,6 +27,7 @@ import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.impl.BitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
+import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 
 class BitcoinServiceTest {
@@ -246,5 +249,42 @@ class BitcoinServiceTest {
         id.setLanguage(language);
         assertEquals("code: " + code + " not exists", exception.getMessage());
         verify(bitcoinTranslationRepo, never()).deleteById(id);
+    }
+
+    @Test
+    void testUpdateStatus_Success() throws BitcoinException {
+        String code = "USD";
+        int status = 1;
+        BitcoinStatus bitcoinStatus = new BitcoinStatus();
+        bitcoinStatus.setCode(code);
+        bitcoinStatus.setStatus(status);
+        Bitcoin bitcoin = new Bitcoin();
+        when(bitcoinRepo.findById(code)).thenReturn(Optional.of(bitcoin));
+        when(bitcoinRepo.save(any(Bitcoin.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Bitcoin updatedBitcoin = bitcoinService.updateStatus(bitcoinStatus);
+        assertNotNull(updatedBitcoin);
+        assertEquals(status, updatedBitcoin.getStatus());
+        assertNotNull(updatedBitcoin.getUpdated());
+        verify(bitcoinRepo, times(1)).findById(code);
+        verify(bitcoinRepo, times(1)).save(updatedBitcoin);
+    }
+
+    @Test
+    void testUpdateStatus_NotFound() {
+        String code = "USD";
+        int status = 1;
+        BitcoinStatus bitcoinStatus = new BitcoinStatus();
+        bitcoinStatus.setCode(code);
+        bitcoinStatus.setStatus(status);
+
+        when(bitcoinRepo.findById(code)).thenReturn(Optional.empty());
+        BitcoinException exception = assertThrows(BitcoinException.class, () -> {
+            bitcoinService.updateStatus(bitcoinStatus);
+        });
+        assertEquals("code: " + code + " not exists", exception.getMessage());
+        verify(bitcoinRepo, times(1)).findById(code);
+        verify(bitcoinRepo, never()).save(any(Bitcoin.class));
     }
 }

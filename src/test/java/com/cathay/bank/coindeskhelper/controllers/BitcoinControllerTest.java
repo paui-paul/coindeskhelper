@@ -1,5 +1,7 @@
 package com.cathay.bank.coindeskhelper.controllers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -17,12 +19,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.cathay.bank.coindeskhelper.controllers.impl.BitcoinController;
+import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
+import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -160,6 +166,37 @@ class BitcoinControllerTest {
         mockMvc.perform(delete("/api/bitcoin/translation/{code}/{language}", code, language))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("code: BTC not exists"));
+    }
+
+    @Test
+    void testUpdateStatus_Success() throws Exception {
+        Bitcoin bitcoin = new Bitcoin();
+        bitcoin.setCode("BTC");
+        bitcoin.setStatus(1);
+        BitcoinStatus status = new BitcoinStatus();
+        status.setCode("BTC");
+        status.setStatus(1);
+        when(bitcoinService.updateStatus(status)).thenReturn(bitcoin);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
+                .contentType("application/json").content("{\"code\":\"BTC\",\"status\":1}"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.result.code").value("BTC"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.result.status").value(1));
+    }
+
+    @Test
+    void testUpdateStatus_BitcoinException() throws Exception {
+        BitcoinStatus status = new BitcoinStatus();
+        status.setCode("BTC");
+        status.setStatus(1);
+
+        when(bitcoinService.updateStatus(status))
+                .thenThrow(new BitcoinException("code: BTC not exists"));
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
+                .contentType("application/json").content("{\"code\":\"BTC\",\"status\":1}"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("code: BTC not exists"));
     }
 
     private String asJsonString(final Object obj) {
