@@ -17,6 +17,7 @@ import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
 import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -29,14 +30,15 @@ public interface IBitcoinController {
 
         @PostMapping("/translation/add-or-update")
         ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
-                        @RequestBody BitcoinTranslationSetting setting) throws BitcoinException;
+                        @Valid @RequestBody BitcoinTranslationSetting setting)
+                        throws BitcoinException;
 
         @DeleteMapping("/translation/{code}/{language}")
         ResponseEntity<RestResult<Boolean>> deleteTranslation(@PathVariable String code,
                         @PathVariable String language) throws BitcoinException;
 
         @PutMapping("/status")
-        ResponseEntity<RestResult<Bitcoin>> updateStatus(@RequestBody BitcoinStatus status)
+        ResponseEntity<RestResult<Bitcoin>> updateStatus(@Valid @RequestBody BitcoinStatus status)
                         throws BitcoinException;
 
 }
