@@ -13,7 +13,15 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class BitcoinTranslationSetting {
     private String code;
-    private BitcoinLanguage language;
+    private String language;
     private String name;
     private String description;
+
+    public String getCode() {
+        return this.code.toUpperCase();
+    }
+
+    public String getLanguage() {
+        return this.language.toUpperCase();
+    }
 }

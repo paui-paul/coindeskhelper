@@ -38,7 +38,7 @@ public class BitcoinService implements IBitcoinService {
 
         BitcoinTranslationId id = new BitcoinTranslationId();
         id.setCode(setting.getCode());
-        id.setLanguage(setting.getLanguage().name());
+        id.setLanguage(setting.getLanguage());
         Optional<BitcoinTranslation> optional = this.bitcoinTranslationRepo.findById(id);
         if (optional.isPresent()) {
             BitcoinTranslation translation = optional.get();
@@ -49,7 +49,7 @@ public class BitcoinService implements IBitcoinService {
         } else {
             BitcoinTranslation translation = new BitcoinTranslation();
             translation.setCode(setting.getCode());
-            translation.setLanguage(setting.getLanguage().name());
+            translation.setLanguage(setting.getLanguage());
             translation.setName(setting.getName());
             translation.setDescription(setting.getDescription());
             translation.setCreatedTime(LocalDateTime.now());

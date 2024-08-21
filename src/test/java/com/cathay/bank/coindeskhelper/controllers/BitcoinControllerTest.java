@@ -22,7 +22,6 @@ import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinLanguage;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -88,7 +87,7 @@ class BitcoinControllerTest {
     void testAddOrUpdateTranslation_Success() throws Exception {
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
-        setting.setLanguage(BitcoinLanguage.EN);
+        setting.setLanguage("EN");
         setting.setName("Bitcoin");
         setting.setDescription("A description");
 
@@ -113,7 +112,7 @@ class BitcoinControllerTest {
     void testAddOrUpdateTranslation_BitcoinNotFound() throws Exception {
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
-        setting.setLanguage(BitcoinLanguage.EN);
+        setting.setLanguage("EN");
         setting.setName("Bitcoin");
         setting.setDescription("A description");
 

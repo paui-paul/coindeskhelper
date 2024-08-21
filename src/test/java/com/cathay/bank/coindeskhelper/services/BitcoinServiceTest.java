@@ -22,7 +22,6 @@ import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.impl.BitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinLanguage;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 
 class BitcoinServiceTest {
@@ -112,7 +111,7 @@ class BitcoinServiceTest {
 
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
-        setting.setLanguage(BitcoinLanguage.EN);
+        setting.setLanguage("EN");
         setting.setName("Bitcoin");
         setting.setDescription("Description");
 
@@ -153,7 +152,7 @@ class BitcoinServiceTest {
 
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
-        setting.setLanguage(BitcoinLanguage.EN);
+        setting.setLanguage("EN");
         setting.setName("Updated Bitcoin");
         setting.setDescription("Updated Description");
 
@@ -182,7 +181,7 @@ class BitcoinServiceTest {
 
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
-        setting.setLanguage(BitcoinLanguage.EN);
+        setting.setLanguage("EN");
         setting.setName("Bitcoin");
         setting.setDescription("Description");
 
