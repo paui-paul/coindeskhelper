@@ -114,6 +114,27 @@ class BitcoinControllerTest {
     }
 
     @Test
+    void testAddOrUpdateTranslation_BadRequest() throws Exception {
+        BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
+        setting.setLanguage("EN");
+        setting.setName("Bitcoin");
+        setting.setDescription("A description");
+
+        BitcoinTranslation translation = new BitcoinTranslation();
+        translation.setCode("BTC");
+        translation.setLanguage("EN");
+        translation.setName("Bitcoin");
+        translation.setDescription("A description");
+
+        when(bitcoinService.addOrUpdateTranslation(any(BitcoinTranslationSetting.class)))
+                .thenReturn(translation);
+
+        mockMvc.perform(post("/api/bitcoin/translation/add-or-update")
+                .contentType(MediaType.APPLICATION_JSON).content(asJsonString(setting)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testAddOrUpdateTranslation_BitcoinNotFound() throws Exception {
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
         setting.setCode("BTC");
@@ -177,10 +198,24 @@ class BitcoinControllerTest {
         when(bitcoinService.updateStatus(status)).thenReturn(bitcoin);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
-                .contentType("application/json").content("{\"code\":\"BTC\",\"status\":1}"))
+                .contentType("application/json").content(asJsonString(status)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.code").value("BTC"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.result.status").value(1));
+    }
+
+    @Test
+    void testUpdateStatus_BadRequest() throws Exception {
+        Bitcoin bitcoin = new Bitcoin();
+        bitcoin.setCode("BTC");
+        bitcoin.setStatus(1);
+        BitcoinStatus status = new BitcoinStatus();
+        status.setStatus(1);
+        when(bitcoinService.updateStatus(status)).thenReturn(bitcoin);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
+                .contentType("application/json").content(asJsonString(status)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -192,9 +227,9 @@ class BitcoinControllerTest {
         when(bitcoinService.updateStatus(status))
                 .thenThrow(new BitcoinException("code: BTC not exists"));
         mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
-                .contentType("application/json").content("{\"code\":\"BTC\",\"status\":1}"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("code: BTC not exists"));
+                .contentType("application/json").content(asJsonString(status)))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest()).andExpect(
+                        MockMvcResultMatchers.jsonPath("$.message").value("code: BTC not exists"));
     }
 
     private String asJsonString(final Object obj) {

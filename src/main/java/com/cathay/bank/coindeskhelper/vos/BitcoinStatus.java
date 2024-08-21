@@ -24,6 +24,6 @@ public class BitcoinStatus {
     private Integer status;
 
     public String getCode() {
-        return this.code.toUpperCase();
+        return this.code == null ? this.code : this.code.toUpperCase();
     }
 }
