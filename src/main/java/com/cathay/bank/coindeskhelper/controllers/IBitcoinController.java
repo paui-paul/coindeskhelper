@@ -17,28 +17,57 @@ import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
 import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 
 @RestController
 @RequestMapping("/api/bitcoin")
 public interface IBitcoinController {
+    @Operation(summary = "Find Bitcoin by language",
+            description = "Retrieve a list of Bitcoin information based on the specified language.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Successfully retrieved Bitcoin information"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @GetMapping("/{language}")
+    ResponseEntity<RestResult<List<BitCoinInfoByLanguage>>> findBitcoinByLanguage(
+            @PathVariable String language);
 
-        @GetMapping("/{language}")
-        ResponseEntity<RestResult<List<BitCoinInfoByLanguage>>> findBitcoinByLanguage(
-                        @PathVariable String language);
+    @Operation(summary = "Add or update Bitcoin translation",
+            description = "Add a new Bitcoin translation or update an existing one based on the provided settings.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Successfully added or updated Bitcoin translation"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid request, possibly due to missing or incorrect data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @PostMapping("/translation/add-or-update")
+    ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
+            @Valid @RequestBody BitcoinTranslationSetting setting) throws BitcoinException;
 
-        @PostMapping("/translation/add-or-update")
-        ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
-                        @Valid @RequestBody BitcoinTranslationSetting setting)
-                        throws BitcoinException;
+    @Operation(summary = "Delete Bitcoin translation",
+            description = "Delete a Bitcoin translation based on the provided code and language.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Successfully deleted Bitcoin translation"),
+            @ApiResponse(responseCode = "400", description = "Invalid code"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @DeleteMapping("/translation/{code}/{language}")
+    ResponseEntity<RestResult<Boolean>> deleteTranslation(@PathVariable String code,
+            @PathVariable String language) throws BitcoinException;
 
-        @DeleteMapping("/translation/{code}/{language}")
-        ResponseEntity<RestResult<Boolean>> deleteTranslation(@PathVariable String code,
-                        @PathVariable String language) throws BitcoinException;
-
-        @PutMapping("/status")
-        ResponseEntity<RestResult<Bitcoin>> updateStatus(@Valid @RequestBody BitcoinStatus status)
-                        throws BitcoinException;
+    @Operation(summary = "Update Bitcoin status",
+            description = "Updates the status of a Bitcoin entity based on the provided BitcoinStatus object.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated Bitcoin status"),
+            @ApiResponse(responseCode = "400",
+                    description = "Invalid request, possibly due to missing or incorrect data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")})
+    @PutMapping("/status")
+    ResponseEntity<RestResult<Bitcoin>> updateStatus(@Valid @RequestBody BitcoinStatus status)
+            throws BitcoinException;
 
 }
