@@ -2,9 +2,13 @@ package com.cathay.bank.coindeskhelper.controllers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.cathay.bank.coindeskhelper.controllers.impl.BitcoinController;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
+import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
 import com.cathay.bank.coindeskhelper.vos.BitcoinLanguage;
@@ -35,6 +40,48 @@ class BitcoinControllerTest {
         MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(bitcoinController)
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
+    }
+
+    @Test
+    void testFindBitcoinByLanguage() throws Exception {
+        // Arrange
+        String language = "EN";
+
+        BitCoinInfoByLanguage bitCoinInfo1 = new BitCoinInfoByLanguage() {
+            @Override
+            public String getCode() {
+                return "BTC";
+            }
+
+            @Override
+            public float getRateFloat() {
+                return 30000.0f;
+            }
+
+            @Override
+            public String getName() {
+                return "Bitcoin";
+            }
+
+            @Override
+            public String getDescription() {
+                return "BTC Description";
+            }
+
+            @Override
+            public LocalDateTime getUpdated() {
+                return LocalDateTime.now();
+            }
+        };
+
+        List<BitCoinInfoByLanguage> expected = Arrays.asList(bitCoinInfo1);
+        when(bitcoinService.findBitCoinInfoByLanguage(language)).thenReturn(expected);
+
+        mockMvc.perform(get("/api/bitcoin/EN")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.result[0].code").value("BTC"))
+                .andExpect(jsonPath("$.result[0].rateFloat").value("30000.0"))
+                .andExpect(jsonPath("$.result[0].name").value("Bitcoin"))
+                .andExpect(jsonPath("$.result[0].description").value("BTC Description"));
     }
 
     @Test

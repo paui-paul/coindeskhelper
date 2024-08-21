@@ -1,11 +1,13 @@
 package com.cathay.bank.coindeskhelper.services.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslationId;
+import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
@@ -21,6 +23,11 @@ public class BitcoinService implements IBitcoinService {
             @Autowired IBitcoinTranslationRepo bitcoinTranslationRepo) {
         this.bitcoinRepo = bitcoinRepo;
         this.bitcoinTranslationRepo = bitcoinTranslationRepo;
+    }
+
+    @Override
+    public List<BitCoinInfoByLanguage> findBitCoinInfoByLanguage(String language) {
+        return this.bitcoinRepo.findBitcoinInfoByLanguage(language.toUpperCase());
     }
 
     @Override

@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslationId;
+import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.impl.BitcoinService;
@@ -35,6 +38,69 @@ class BitcoinServiceTest {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testFindBitCoinInfoByLanguage() {
+        String language = "EN";
+        BitCoinInfoByLanguage bitCoinInfo1 = new BitCoinInfoByLanguage() {
+            @Override
+            public String getCode() {
+                return "BTC";
+            }
+
+            @Override
+            public float getRateFloat() {
+                return 30000.0f;
+            }
+
+            @Override
+            public String getName() {
+                return "Bitcoin";
+            }
+
+            @Override
+            public String getDescription() {
+                return "BTC Description";
+            }
+
+            @Override
+            public LocalDateTime getUpdated() {
+                return LocalDateTime.now();
+            }
+        };
+        BitCoinInfoByLanguage bitCoinInfo2 = new BitCoinInfoByLanguage() {
+            @Override
+            public String getCode() {
+                return "ETH";
+            }
+
+            @Override
+            public float getRateFloat() {
+                return 2000.0f;
+            }
+
+            @Override
+            public String getName() {
+                return "Ethereum";
+            }
+
+            @Override
+            public String getDescription() {
+                return "ETH Description";
+            }
+
+            @Override
+            public LocalDateTime getUpdated() {
+                return LocalDateTime.now();
+            }
+        };
+
+        List<BitCoinInfoByLanguage> expected = Arrays.asList(bitCoinInfo1, bitCoinInfo2);
+
+        when(bitcoinRepo.findBitcoinInfoByLanguage(language)).thenReturn(expected);
+        List<BitCoinInfoByLanguage> actual = bitcoinService.findBitCoinInfoByLanguage(language);
+        assertEquals(expected, actual);
     }
 
     @Test
