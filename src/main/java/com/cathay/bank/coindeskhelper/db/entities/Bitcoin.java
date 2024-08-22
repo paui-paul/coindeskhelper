@@ -23,9 +23,6 @@ public class Bitcoin implements Serializable {
     @Column
     private float rateFloat;
 
-    @Column
-    private int status;
-
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime updated;
 

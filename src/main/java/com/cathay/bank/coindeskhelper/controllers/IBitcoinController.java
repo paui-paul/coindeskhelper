@@ -6,15 +6,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,15 +56,15 @@ public interface IBitcoinController {
     ResponseEntity<RestResult<Boolean>> deleteTranslation(@PathVariable String code,
             @PathVariable String language) throws BitcoinException;
 
-    @Operation(summary = "Update Bitcoin status",
-            description = "Updates the status of a Bitcoin entity based on the provided BitcoinStatus object.")
+
+    @Operation(summary = "Delete Bitcoin",
+            description = "Delete a Bitcoin based on the provided code")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated Bitcoin status"),
-            @ApiResponse(responseCode = "400",
-                    description = "Invalid request, possibly due to missing or incorrect data"),
+            @ApiResponse(responseCode = "200",
+                    description = "Successfully deleted Bitcoind"),
+            @ApiResponse(responseCode = "400", description = "Invalid code"),
             @ApiResponse(responseCode = "500", description = "Internal server error")})
-    @PutMapping("/status")
-    ResponseEntity<RestResult<Bitcoin>> updateStatus(@Valid @RequestBody BitcoinStatus status)
-            throws BitcoinException;
+    @DeleteMapping("/{code}")
+    ResponseEntity<RestResult<Boolean>> delete(@PathVariable String code) throws BitcoinException;
 
 }

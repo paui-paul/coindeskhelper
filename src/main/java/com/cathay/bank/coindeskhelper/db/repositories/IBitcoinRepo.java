@@ -22,9 +22,6 @@ public interface IBitcoinRepo extends JpaRepository<Bitcoin, String> {
                 ON
                     A.CODE         = B.CODE
                     AND B.LANGUAGE = :language
-            WHERE
-                1            = 1
-                AND A.STATUS = 0
             """;
 
     @Query(value = FIND_BITCOIN_INFO_BY_LANGUAGE_SQL, nativeQuery = true)

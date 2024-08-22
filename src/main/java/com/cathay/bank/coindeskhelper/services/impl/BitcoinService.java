@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslationId;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
@@ -13,7 +12,6 @@ import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinRepo;
 import com.cathay.bank.coindeskhelper.db.repositories.IBitcoinTranslationRepo;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 
 @Component
@@ -61,11 +59,12 @@ public class BitcoinService implements IBitcoinService {
 
     @Override
     public boolean deleteTranslation(String code, String language) throws BitcoinException {
-        if (!this.bitcoinRepo.existsById(code.toUpperCase()))
+        code = code.toUpperCase();
+        if (!this.bitcoinRepo.existsById(code))
             throw new BitcoinException("code: " + code + " not exists");
 
         BitcoinTranslationId id = new BitcoinTranslationId();
-        id.setCode(code.toUpperCase());
+        id.setCode(code);
         id.setLanguage(language.toUpperCase());
 
         if (this.bitcoinTranslationRepo.existsById(id)) {
@@ -76,16 +75,17 @@ public class BitcoinService implements IBitcoinService {
     }
 
     @Override
-    public Bitcoin updateStatus(BitcoinStatus status) throws BitcoinException {
-        Optional<Bitcoin> optional = this.bitcoinRepo.findById(status.getCode());
-        if (optional.isPresent()) {
-            Bitcoin bitcoin = optional.get();
-            bitcoin.setStatus(status.getStatus());
-            bitcoin.setUpdated(LocalDateTime.now());
-            return this.bitcoinRepo.save(bitcoin);
-        } else {
-            throw new BitcoinException("code: " + status.getCode() + " not exists");
-        }
+    public boolean deleteBitcoin(String code) throws BitcoinException {
+        code = code.toUpperCase();
+        if (!this.bitcoinRepo.existsById(code))
+            throw new BitcoinException("code: " + code + " not exists");
+
+        List<BitcoinTranslation> list = this.bitcoinTranslationRepo.findByCode(code);
+        if (!list.isEmpty())
+            this.bitcoinTranslationRepo.deleteAll(list);
+
+        this.bitcoinRepo.deleteById(code);
+        return true;
     }
 
 }

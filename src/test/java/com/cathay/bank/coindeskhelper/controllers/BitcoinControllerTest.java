@@ -17,16 +17,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import com.cathay.bank.coindeskhelper.controllers.impl.BitcoinController;
-import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -188,48 +184,29 @@ class BitcoinControllerTest {
     }
 
     @Test
-    void testUpdateStatus_Success() throws Exception {
-        Bitcoin bitcoin = new Bitcoin();
-        bitcoin.setCode("BTC");
-        bitcoin.setStatus(1);
-        BitcoinStatus status = new BitcoinStatus();
-        status.setCode("BTC");
-        status.setStatus(1);
-        when(bitcoinService.updateStatus(status)).thenReturn(bitcoin);
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
-                .contentType("application/json").content(asJsonString(status)))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.code").value("BTC"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.result.status").value(1));
+    void delete_Success() throws Exception {
+        String code = "BTC";
+        when(bitcoinService.deleteBitcoin(code)).thenReturn(true);
+        mockMvc.perform(delete("/api/bitcoin/{code}", code))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result").value(true));
     }
 
     @Test
-    void testUpdateStatus_BadRequest() throws Exception {
-        Bitcoin bitcoin = new Bitcoin();
-        bitcoin.setCode("BTC");
-        bitcoin.setStatus(1);
-        BitcoinStatus status = new BitcoinStatus();
-        status.setStatus(1);
-        when(bitcoinService.updateStatus(status)).thenReturn(bitcoin);
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
-                .contentType("application/json").content(asJsonString(status)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    void delete_CodeNotExists() throws Exception {
+        String code = "BTC";
+        when(bitcoinService.deleteBitcoin(code)).thenThrow(new BitcoinException("code: BTC not exists"));
+        mockMvc.perform(delete("/api/bitcoin/{code}", code))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("code: BTC not exists"));
     }
 
     @Test
-    void testUpdateStatus_BitcoinException() throws Exception {
-        BitcoinStatus status = new BitcoinStatus();
-        status.setCode("BTC");
-        status.setStatus(1);
-
-        when(bitcoinService.updateStatus(status))
-                .thenThrow(new BitcoinException("code: BTC not exists"));
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/bitcoin/status")
-                .contentType("application/json").content(asJsonString(status)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest()).andExpect(
-                        MockMvcResultMatchers.jsonPath("$.message").value("code: BTC not exists"));
+    void delete_Internal_Server_Error() throws Exception {
+        String code = "BTC";
+        when(bitcoinService.deleteBitcoin(code)).thenThrow(new RuntimeException("Unexpected error"));
+        mockMvc.perform(delete("/api/bitcoin/{code}", code))
+                .andExpect(status().isInternalServerError());
     }
 
     private String asJsonString(final Object obj) {

@@ -5,12 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import com.cathay.bank.coindeskhelper.controllers.IBitcoinController;
-import com.cathay.bank.coindeskhelper.db.entities.Bitcoin;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
-import com.cathay.bank.coindeskhelper.vos.BitcoinStatus;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
 
@@ -47,10 +45,9 @@ public class BitcoinController implements IBitcoinController {
     }
 
     @Override
-    public ResponseEntity<RestResult<Bitcoin>> updateStatus(BitcoinStatus status)
-            throws BitcoinException {
-        RestResult<Bitcoin> result = new RestResult<>();
-        result.setResult(this.service.updateStatus(status));
+    public ResponseEntity<RestResult<Boolean>> delete(String code) throws BitcoinException {
+        RestResult<Boolean> result = new RestResult<>();
+        result.setResult(this.service.deleteBitcoin(code));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
