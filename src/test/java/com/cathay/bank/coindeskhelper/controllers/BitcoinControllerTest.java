@@ -112,7 +112,6 @@ class BitcoinControllerTest {
     @Test
     void testAddOrUpdateTranslation_BadRequest() throws Exception {
         BitcoinTranslationSetting setting = new BitcoinTranslationSetting();
-        setting.setLanguage("EN");
         setting.setName("Bitcoin");
         setting.setDescription("A description");
 
