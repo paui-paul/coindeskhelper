@@ -8,6 +8,7 @@ import com.cathay.bank.coindeskhelper.controllers.IBitcoinController;
 import com.cathay.bank.coindeskhelper.db.entities.BitcoinTranslation;
 import com.cathay.bank.coindeskhelper.db.projections.BitCoinInfoByLanguage;
 import com.cathay.bank.coindeskhelper.services.IBitcoinService;
+import com.cathay.bank.coindeskhelper.utils.annotations.LogExecution;
 import com.cathay.bank.coindeskhelper.utils.exceptions.BitcoinException;
 import com.cathay.bank.coindeskhelper.vos.BitcoinTranslationSetting;
 import com.cathay.bank.coindeskhelper.vos.RestResult;
@@ -20,6 +21,7 @@ public class BitcoinController implements IBitcoinController {
         this.service = service;
     }
 
+    @LogExecution
     @Override
     public ResponseEntity<RestResult<List<BitCoinInfoByLanguage>>> findBitcoinByLanguage(
             String language) {
@@ -28,6 +30,7 @@ public class BitcoinController implements IBitcoinController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @LogExecution
     @Override
     public ResponseEntity<RestResult<BitcoinTranslation>> addOrUpdateTranslation(
             BitcoinTranslationSetting setting) throws BitcoinException {
@@ -36,6 +39,7 @@ public class BitcoinController implements IBitcoinController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @LogExecution
     @Override
     public ResponseEntity<RestResult<Boolean>> deleteTranslation(String code, String language)
             throws BitcoinException {
@@ -44,6 +48,7 @@ public class BitcoinController implements IBitcoinController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @LogExecution
     @Override
     public ResponseEntity<RestResult<Boolean>> delete(String code) throws BitcoinException {
         RestResult<Boolean> result = new RestResult<>();
