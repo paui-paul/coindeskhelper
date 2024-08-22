@@ -8,9 +8,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
+@Table(name = "EXECUTION_LOG")
 @Data
 public class ExecutionLog implements Serializable {
 
